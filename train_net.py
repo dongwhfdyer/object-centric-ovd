@@ -121,7 +121,7 @@ def do_train(cfg, model, resume=False):
         MapperClass(cfg, True, augmentations=build_custom_augmentation(cfg, True))
     if cfg.DATALOADER.SAMPLER_TRAIN in ['TrainingSampler', 'RepeatFactorTrainingSampler']:
         data_loader = build_detection_train_loader(cfg, mapper=mapper)
-    else:
+    else:  # True
         data_loader = build_custom_train_loader(cfg, mapper=mapper)
 
     if cfg.FP16:
@@ -224,6 +224,7 @@ def main(args):
 
 if __name__ == "__main__":
     args = default_argument_parser()
+    args.add_argument('--local_rank', default=-1, type=int, help='node rank for distributed training')
     args = args.parse_args()
 
     print("Command Line Args:", args)

@@ -1,0 +1,1 @@
+python train_net.py --num-gpus 1 --config-file configs/lvis/LVIS_OVD_Base_PIS.yaml

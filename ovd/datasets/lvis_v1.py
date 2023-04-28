@@ -110,7 +110,7 @@ def custom_load_lvis_json(json_file, image_root, dataset_name=None):
         record["catid2contid"] = catid2contid
         dataset_dicts.append(record)
 
-    return dataset_dicts
+    return dataset_dicts # list: 98238. Each item is a dict. The dict includes keys: file_name, height, width, not_exhaustive_category_ids, neg_category_ids, image_id, annotations, catid2contid
 
 
 _CUSTOM_SPLITS_LVIS = {

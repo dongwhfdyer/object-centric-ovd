@@ -92,8 +92,21 @@ class CustomRCNNMViT(GeneralizedRCNN):
         else:
             features = self.backbone(images.tensor)
 
-        rpn_proposals, proposal_losses = self.proposal_generator(
-            images, features, gt_instances)
+
+        if ann_type == 'box':
+            rpn_proposals, proposal_losses = self.proposal_generator(
+                images, features, gt_instances)
+        elif ann_type == 'image':
+
+            try:
+                rpn_proposals, proposal_losses = self.proposal_generator(
+                    images, features, gt_instances)
+            except FloatingPointError as e:
+                rpn_proposals = None
+                # set a large loss to prevent training
+                proposal_losses = {'loss_rpn_cls': torch.tensor(1).to(self.device),
+                                      'loss_rpn_loc': torch.tensor(1).to(self.device)}
+                print(e)
 
         if (self.with_image_labels) & (ann_type == 'image'):
             proposals = self.convert_output_rpn_format_target(batched_inputs, images)

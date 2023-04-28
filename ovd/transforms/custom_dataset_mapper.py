@@ -187,7 +187,7 @@ class CustomDatasetMapperMix(DatasetMapper):
 
         # Loading MViT proposals with image in dataloader
         if self.ann_type == 'image' and self.is_train and len(self.pis_proposal_path) > 0:
-            catid2contid = dataset_dict["catid2contid"]
+            catid2contid = dataset_dict["catid2contid"]  # it's often used for retrieving MviT proposal's index
             image_name = dataset_dict["file_name"].split('.')[0].split('/')[-1]
             proposal_file = f'{self.pis_proposal_path}/{image_name}.pkl'
             with open(proposal_file, "rb") as f:

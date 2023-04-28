@@ -98,7 +98,7 @@ def build_custom_train_loader(
     if sampler is None:
         sampler = TrainingSampler(len(dataset))
     assert isinstance(sampler, torch.utils.data.sampler.Sampler)
-    if multi_dataset_grouping:
+    if multi_dataset_grouping: # True
         return build_multi_dataset_batch_data_loader(
             use_diff_bs_size,
             dataset_bs,
@@ -196,9 +196,9 @@ class MultiDatasetSampler(Sampler):
         """
         """
         sizes = [0 for _ in range(len(dataset_ratio))]
-        for d in dataset_dicts:
+        for d in dataset_dicts:  # the d is item.
             sizes[d['dataset_source']] += 1
-        print('dataset sizes', sizes)
+        print('dataset sizes', sizes)  # 107761, 98238
         self.sizes = sizes
         assert len(dataset_ratio) == len(sizes), \
             'length of dataset ratio {} should be equal to number if dataset {}'.format(
@@ -210,7 +210,7 @@ class MultiDatasetSampler(Sampler):
         self._rank = comm.get_rank()
         self._world_size = comm.get_world_size()
 
-        self.dataset_ids = torch.tensor(
+        self.dataset_ids = torch.tensor(  # [0, 0, 0, ..., 1, 1, 1, ...] 205999
             [d['dataset_source'] for d in dataset_dicts], dtype=torch.long)
 
         dataset_weight = [torch.ones(s) * max(sizes) / s * r / sum(dataset_ratio) \
@@ -220,7 +220,7 @@ class MultiDatasetSampler(Sampler):
         rfs_factors = []
         st = 0
         for i, s in enumerate(sizes):
-            if use_rfs[i]:
+            if use_rfs[i]:  # False
                 if dataset_ann[i] == 'box':
                     rfs_func = RepeatFactorTrainingSampler.repeat_factors_from_category_frequency
                 else:
@@ -229,13 +229,13 @@ class MultiDatasetSampler(Sampler):
                     dataset_dicts[st: st + s],
                     repeat_thresh=repeat_threshold)
                 rfs_factor = rfs_factor * (s / rfs_factor.sum())
-            else:
+            else:  # True
                 rfs_factor = torch.ones(s)
             rfs_factors.append(rfs_factor)
             st = st + s
         rfs_factors = torch.cat(rfs_factors)
 
-        self.weights = dataset_weight * rfs_factors
+        self.weights = dataset_weight * rfs_factors  # [0.5, 0.5, 0.5, ..., 0.8, 0.8, 0.8, ...] 205999
         self.sample_epoch_size = len(self.weights)
 
     def __iter__(self):
@@ -284,7 +284,7 @@ class DIFFMDAspectRatioGroupedDataset(torch.utils.data.IterableDataset):
         self._buckets = [[] for _ in range(2 * num_datasets)]
 
     def __iter__(self):
-        for d in self.dataset:
+        for d in self.dataset:  # actually, the d is one item. it's a dict
             w, h = d["width"], d["height"]
             aspect_ratio_bucket_id = 0 if w > h else 1
             bucket_id = d['dataset_source'] * 2 + aspect_ratio_bucket_id

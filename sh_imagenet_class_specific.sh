@@ -1,0 +1,2 @@
+python tools/get_ils_labels.py -ckpt <mavl pretrained weights path> -dataset imagenet_lvis
+        -dataset_dir datasets/imagenet -output datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props
