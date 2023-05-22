@@ -2,6 +2,11 @@ import argparse
 import json
 from collections import defaultdict
 from detectron2.data.datasets.lvis_v1_categories import LVIS_CATEGORIES
+"""
+We have set the categories in advance. Then we select the images whose caption includes the categories' name.
+ The selected number is 5.
+ Then we save these images and captions that are selected.
+"""
 
 # This mapping is extracted from the official LVIS mapping:
 # https://github.com/lvis-dataset/lvis-api/blob/master/data/coco_to_synset.json

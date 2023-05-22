@@ -17,9 +17,13 @@ Examples:
         python tools/get_ils_labels.py -ckpt <mavl pretrained weights path> -dataset imagenet_lvis
         -dataset_dir datasets/imagenet -output datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props
 """
+import asyncio
+import sys
 
-import argparse
 import os
+# sys.path.append('/data/pcl/proj/object-centric-ovd/external')
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import argparse
 import json
 from tqdm import tqdm
 import numpy as np
@@ -29,7 +33,6 @@ from utils.save_proposal_boxes import SaveProposalBoxes
 
 from utils.get_coco_ils_query import get_query as get_coco_query
 from utils.get_lvis_ils_query import get_query as get_lvis_query
-
 
 def parse_arguments():
     """
@@ -132,6 +135,7 @@ def get_imagenet_lvis_ils_labels(dataset_dir, save_dir, conf_thresh=0.0):
         if i > 0 and i % 5 == 0:  # Save every 500 iterations
             dumper.update(detections)
             dumper.save_imagenet(save_dir)
+
             detections = {}
         image_path = f"{images_path}/{image_name_key}.JPEG"
         image_name = os.path.basename(image_name_key)
@@ -166,6 +170,7 @@ if __name__ == "__main__":
     if dataset_name == "coco":
         get_coco_ils_labels(dataset_base_dir, output_dir)
     elif dataset_name == "imagenet_lvis":
+        # asyncio.run(get_imagenet_lvis_ils_labels(dataset_base_dir, output_dir))
         get_imagenet_lvis_ils_labels(dataset_base_dir, output_dir)
     else:
         print(f"Only 'coco' and 'imagenet_lvis' datasets are supported.")

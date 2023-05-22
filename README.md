@@ -1,3 +1,8 @@
+# kuhn notes
+
+As for `tools/unzip_imagenet_lvis.py` file, we added the feature for selecting the overlapping images between imagenet and lvis dataset. 
+And we create a directory that contains the overlapping images by sim-linking the images from original imagenet directory.
+
 # Object Centric Open Vocabulary Detection (NeurIPS 2022)
 
 Official repository of paper titled "[Bridging the Gap between Object and Image-level Representations for Open-Vocabulary Detection](https://arxiv.org/abs/2207.03482)".
@@ -52,7 +57,7 @@ Official repository of paper titled "[Bridging the Gap between Object and Image-
 
 ## Installation
 
-The code is tested with PyTorch 1.10.0 and CUDA 11.3. After cloning the repository, follow the below steps in [INSTALL.md](docs/INSTALL.md).
+The code i tested with PyTorch 1.10.0 and CUDA 11.3. After scloning the repository, follow the below steps in [INSTALL.md](docs/INSTALL.md).
 All of our models are trained using 8 A100 GPUs.
 <hr />
 
