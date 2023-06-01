@@ -2,8 +2,14 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-folder_path = Path("datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props")
-folder_path2 = Path("datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props2")
+#---------kkuhn-block------------------------------ # rs
+folder_path = Path("datasets/MAVL_proposals/rs_props/class_specific")
+folder_path2 = Path("datasets/MAVL_proposals/rs_props/class_specific2")
+#---------kkuhn-block------------------------------
+# #---------kkuhn-block------------------------------ # lvis
+# folder_path = Path("datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props")
+# folder_path2 = Path("datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props2")
+# #---------kkuhn-block------------------------------
 
 # if exists, delete folder2
 if folder_path2.exists():

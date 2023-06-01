@@ -39,7 +39,7 @@ def _custom_train_loader_from_config(cfg, mapper=None, *, dataset=None, sampler=
             proposal_files=cfg.DATASETS.PROPOSAL_FILES_TRAIN if cfg.MODEL.LOAD_PROPOSALS else None,
         )
 
-    if mapper is None:
+    if mapper is None:  # for `LVIS_OVD_Base_PIS`, mapper is not None
         mapper = DatasetMapper(cfg, True)
 
     if sampler is not None:
@@ -91,14 +91,14 @@ def build_custom_train_loader(
     Modified from detectron2.data.build.build_custom_train_loader, but supports
     different samplers
     """
-    if isinstance(dataset, list):
+    if isinstance(dataset, list): # True for `LVIS_OVD_Base_PIS`
         dataset = DatasetFromList(dataset, copy=False)
     if mapper is not None:
         dataset = MapDataset(dataset, mapper)
     if sampler is None:
         sampler = TrainingSampler(len(dataset))
     assert isinstance(sampler, torch.utils.data.sampler.Sampler)
-    if multi_dataset_grouping: # True
+    if multi_dataset_grouping:  # True
         return build_multi_dataset_batch_data_loader(
             use_diff_bs_size,
             dataset_bs,
@@ -186,11 +186,11 @@ def get_detection_dataset_dicts_with_source(
 class MultiDatasetSampler(Sampler):
     def __init__(
             self,
-            dataset_dicts,
-            dataset_ratio,
-            use_rfs,
-            dataset_ann,
-            repeat_threshold=0.001,
+            dataset_dicts, # list of dicts. len(dataset_dicts) = 1342315 = 100170 + 1242145
+            dataset_ratio,  # [1, 4]
+            use_rfs,  # [True, False]
+            dataset_ann,  # ['box', 'image']
+            repeat_threshold=0.001, # 0.001
             seed: Optional[int] = None,
     ):
         """
@@ -212,28 +212,32 @@ class MultiDatasetSampler(Sampler):
 
         self.dataset_ids = torch.tensor(  # [0, 0, 0, ..., 1, 1, 1, ...] 205999
             [d['dataset_source'] for d in dataset_dicts], dtype=torch.long)
-
+        # the meaning of dataset_weight: due to the different number of images in each dataset,
+        # we need to assign different weights to each dataset. The weight is proportional to the
+        # number of images in each dataset. Larger dataset has smaller weight.
         dataset_weight = [torch.ones(s) * max(sizes) / s * r / sum(dataset_ratio) \
                           for i, (r, s) in enumerate(zip(dataset_ratio, sizes))]
         dataset_weight = torch.cat(dataset_weight)
 
+        #---------kkuhn-block------------------------------ #  Repeat Factor
         rfs_factors = []
         st = 0
         for i, s in enumerate(sizes):
-            if use_rfs[i]:  # False
-                if dataset_ann[i] == 'box':
+            if use_rfs[i]:  # for imagenet_lvis_v1_pis False
+                if dataset_ann[i] == 'box': # for box dataset
                     rfs_func = RepeatFactorTrainingSampler.repeat_factors_from_category_frequency
-                else:
+                else: # for images dataset
                     rfs_func = repeat_factors_from_tag_frequency
                 rfs_factor = rfs_func(
                     dataset_dicts[st: st + s],
                     repeat_thresh=repeat_threshold)
                 rfs_factor = rfs_factor * (s / rfs_factor.sum())
-            else:  # True
+            else:  # for lvis_v1_train_norare, True
                 rfs_factor = torch.ones(s)
             rfs_factors.append(rfs_factor)
             st = st + s
         rfs_factors = torch.cat(rfs_factors)
+        #---------kkuhn-block------------------------------
 
         self.weights = dataset_weight * rfs_factors  # [0.5, 0.5, 0.5, ..., 0.8, 0.8, 0.8, ...] 205999
         self.sample_epoch_size = len(self.weights)

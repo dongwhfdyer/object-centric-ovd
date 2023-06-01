@@ -121,8 +121,8 @@ def do_train(cfg, model, resume=False):
         MapperClass(cfg, True, augmentations=build_custom_augmentation(cfg, True))
     if cfg.DATALOADER.SAMPLER_TRAIN in ['TrainingSampler', 'RepeatFactorTrainingSampler']:
         data_loader = build_detection_train_loader(cfg, mapper=mapper)
-    else:  # True
-        data_loader = build_custom_train_loader(cfg, mapper=mapper)
+    else:  # True for `LVIS_OVD__Base_PIS`
+        data_loader = build_custom_train_loader(cfg, mapper=mapper)  # data_loader = DIFFMDAspectRatioGroupedDataset
 
     if cfg.FP16:
         scaler = GradScaler()

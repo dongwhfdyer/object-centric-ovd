@@ -41,7 +41,11 @@ def main():
     mavl_prop_path = args["mavl_proposal_path"]
     target_json_path = args["target_file_path"]
     # Reference json file
-    ref_json_path = f"{dataset_dir}/annotations/imagenet_lvis_image_info.json"
+    if "remote_sensing" in dataset_dir:
+        ref_json_path = f"{dataset_dir}/annotations/image_info.json"
+    else:
+        ref_json_path = f"{dataset_dir}/annotations/imagenet_lvis_image_info.json"
+    print("Reference json path: ", ref_json_path)
     # Read the reference json
     with open(ref_json_path) as f:
         ref_json_contents = json.load(f)
@@ -53,11 +57,13 @@ def main():
     for image in tqdm(ref_json_contents['images']):
         file_name = image['file_name']
         image_id = image['id']
+        category_id = str(image['pos_category_ids'][0])
         image_name = os.path.basename(file_name)
         image_name = image_name.split('.')[0]
-        if os.path.exists(f"{mavl_prop_path}/{image_name}.pkl"):
+        img_path = f"{mavl_prop_path}/{category_id}/{image_name}.pkl"
+        if os.path.exists(img_path):
             # Read pkl file and load box and category
-            with open(f"{mavl_prop_path}/{image_name}.pkl", "rb") as f:
+            with open(img_path, "rb") as f:
                 detections = pickle.load(f)
             target_keys = detections.keys()
             for k in target_keys:
@@ -65,6 +71,9 @@ def main():
                 box, prob = detections[k]
                 box, prob = box[0], prob[0]  # Assuming there is only one box
                 box_area = (box[3] - box[1]) * (box[2] - box[0])
+                # switch box to normal list and as int values
+                box = box.astype(int).tolist()
+                box_area = int(box_area)
                 annotation = {'area': box_area, 'id': ann_id, 'image_id': image_id, 'bbox': box, 'category_id': k}
                 annotations.append(annotation)
                 ann_id += 1
@@ -77,3 +86,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # python tools/create_lvis_ils_json.py -dataset_dir datasets/remote_sensing -prop_path datasets/MAVL_proposals/rs_props/class_specific -target_path datasets/remote_sensing/annotations/rs_pis_aggregated.json

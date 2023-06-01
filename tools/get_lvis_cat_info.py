@@ -38,3 +38,5 @@ if __name__ == '__main__':
     out_path = args.ann[:-5] + '_cat_info.json'
     print('Saving to', out_path)
     json.dump(out, open(out_path, 'w'))
+
+    # python tools/get_lvis_cat_info.py --ann datasets/lvis/lvis_v1_train_norare.json

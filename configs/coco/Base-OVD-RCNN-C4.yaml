@@ -1,3 +1,4 @@
+# Notes: There is no distillation loss in this config file.
 MODEL:
   META_ARCHITECTURE: "CustomRCNN"
   RPN:
@@ -5,7 +6,8 @@ MODEL:
     POST_NMS_TOPK_TEST: 1000
   ROI_HEADS:
     NAME: "CustomRes5ROIHeads"
-  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+  WEIGHTS: "saved_models/R-50.pkl"
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
   RESNETS:
     DEPTH: 50
   ROI_BOX_HEAD:
@@ -19,7 +21,7 @@ DATASETS:
   TRAIN: ("coco_zeroshot_train_oriorder",)
   TEST: ("coco_generalized_zeroshot_val",)
 SOLVER:
-  IMS_PER_BATCH: 16 # Overall batch-size
+  IMS_PER_BATCH: 8 # Overall batch-size todo: original one: 16
   BASE_LR: 0.02
   STEPS: (60000, 80000)
   MAX_ITER: 90000

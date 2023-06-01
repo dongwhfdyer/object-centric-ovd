@@ -24,7 +24,6 @@ class SaveProposalBoxes(SavePKLFormat):
                 img_to_boxes = self.predictions[image_name]
                 pickle.dump(img_to_boxes, f)
 
-
 # ---------kkuhn-block------------------------------
 
 # # ---------kkuhn-block------------------------------ # async
