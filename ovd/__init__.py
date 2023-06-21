@@ -8,4 +8,5 @@ from .datasets import lvis_v1
 from .datasets import imagenet
 from .datasets import coco_zeroshot
 from .datasets import RS
+from .datasets import RS_20
 from .datasets import DIOR_zero_shot

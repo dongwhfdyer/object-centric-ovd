@@ -3,7 +3,7 @@ import json
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ann", default='datasets/lvis/lvis_v1_train.json')
+    parser.add_argument("--ann", default="/data/pcl/object-centric-ovd/datasets/DIOR/Annotations/coco_split/instances_DIOR_train_seen_2_oriorder.json")
     parser.add_argument("--add_freq", action='store_true')
     parser.add_argument("--r_thresh", type=int, default=10)
     parser.add_argument("--c_thresh", type=int, default=100)
@@ -22,11 +22,11 @@ if __name__ == '__main__':
         x['image_count'] = len(image_count[x['id']])
         x['instance_count'] = ann_count[x['id']]
         if args.add_freq:
-            freq = 'f'
+            freq = 'f' # frequent
             if x['image_count'] < args.c_thresh:
-                freq = 'c'
+                freq = 'c' # common
             if x['image_count'] < args.r_thresh:
-                freq = 'r'
+                freq = 'r' # rare
             x['frequency'] = freq
             num_freqs[freq] += 1
     print(cats)

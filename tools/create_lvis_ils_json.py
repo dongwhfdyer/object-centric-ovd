@@ -87,3 +87,4 @@ def main():
 if __name__ == "__main__":
     main()
     # python tools/create_lvis_ils_json.py -dataset_dir datasets/remote_sensing -prop_path datasets/MAVL_proposals/rs_props/class_specific -target_path datasets/remote_sensing/annotations/rs_pis_aggregated.json
+    # python tools/create_lvis_ils_json.py -dataset_dir datasets/remote_sensing -prop_path datasets/MAVL_proposals/rs_20_props/class_specific -target_path datasets/remote_sensing/annotations/rs_20_pis_aggregated.json

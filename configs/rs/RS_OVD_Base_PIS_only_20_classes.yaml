@@ -3,21 +3,21 @@ MODEL:
   META_ARCHITECTURE: "CustomRCNNMViT"
   #  WEIGHTS: ""
   WEIGHTS: saved_models/coco_ovd_base.pth
-  PIS_PROP_PATH: datasets/MAVL_proposals/rs_props/class_specific2
+  PIS_PROP_PATH: datasets/MAVL_proposals/rs_20_props/class_specific2
   ROI_HEADS:
-    NUM_CLASSES: 123
+    NUM_CLASSES: 20
   ROI_BOX_HEAD:
     WEIGHT_TRANSFER: False
     WS_NUM_PROPS: 32
     IMAGE_LABEL_LOSS: 'pseudo_max_score'
-    ZEROSHOT_WEIGHT_PATH: "/data/pcl/object-centric-ovd/datasets/zeroshot_weights/DIOR_rs_clip_a+photo+cname.npy"
+    ZEROSHOT_WEIGHT_PATH: "/data/pcl/object-centric-ovd/datasets/zeroshot_weights/DIOR_clip_a+photo+cname.npy"
 
 SOLVER:
   BASE_LR: 0.02
   STEPS: (60000, 80000)
   MAX_ITER: 90000
 DATASETS:
-  TRAIN: ("DIOR_zeroshot_train_oriorder", "rs_pis")
+  TRAIN: ("DIOR_zeroshot_train_oriorder", "rs_pis_20")
 INPUT:
   CUSTOM_AUG: ResizeShortestEdge
   MIN_SIZE_TRAIN_SAMPLING: range
@@ -35,4 +35,4 @@ DATALOADER:
   DATASET_ANN: [ 'box', 'image' ]
   NUM_WORKERS: 8
 WITH_IMAGE_LABELS: True
-OUTPUT_DIR: output/rs_ovd_PIS
+OUTPUT_DIR: output/rs_20_ovd_PIS

@@ -23,7 +23,7 @@ from tqdm import tqdm
 import csv
 
 # Path to dataset folder
-dataset_folder = 'datasets/remote_sensing/RS_images'
+dataset_folder = 'datasets/remote_sensing/RS_images_20'
 
 # Path to annotations folder
 annotations_folder = 'datasets/remote_sensing/annotations'
@@ -64,10 +64,10 @@ for folder in os.listdir(dataset_folder):
         rename_folder(folder_path)
 
 # Save mapping to JSON files
-with open(os.path.join(annotations_folder, 'category2id.json'), 'w') as f:
+with open(os.path.join(annotations_folder, 'rs_20_category2id.json'), 'w') as f:
     json.dump(category2id, f)
 
-with open(os.path.join(annotations_folder, 'id2category.json'), 'w') as f:
+with open(os.path.join(annotations_folder, 'rs_20_id2category.json'), 'w') as f:
     json.dump(id2category, f)
 
 # Generate image_info
@@ -107,10 +107,8 @@ for folder in tqdm(os.listdir(dataset_folder)):
             img_info = {"id": img_counter, "file_name": img_path, "pos_category_ids": [category2id[folder]], "width": img_width, "height": img_height}
             image_info.append(img_info)
 
-# for i in image_info:
-#     if i['pos_category_ids'][0] ==117:
-#         print(i['file_name'])
 
-with open(os.path.join(annotations_folder, 'image_info.json'), 'w') as f:
+
+with open(os.path.join(annotations_folder, 'rs_20_image_info.json'), 'w') as f:
     out = {'categories': cats, 'images': image_info, 'annotations': []}
     f = json.dump(out, f)

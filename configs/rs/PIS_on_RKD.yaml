@@ -2,7 +2,7 @@ _BASE_: "Base-OVD-RCNN-C4-DIOR.yaml"
 MODEL:
   META_ARCHITECTURE: "CustomRCNNMViT"
   #  WEIGHTS: ""
-  WEIGHTS: saved_models/coco_ovd_base.pth
+  WEIGHTS: output/rs_ovd_RKD/model_final.pth
   PIS_PROP_PATH: datasets/MAVL_proposals/rs_props/class_specific2
   ROI_HEADS:
     NUM_CLASSES: 123
@@ -13,7 +13,7 @@ MODEL:
     ZEROSHOT_WEIGHT_PATH: "/data/pcl/object-centric-ovd/datasets/zeroshot_weights/DIOR_rs_clip_a+photo+cname.npy"
 
 SOLVER:
-  BASE_LR: 0.02
+  BASE_LR: 0.0002
   STEPS: (60000, 80000)
   MAX_ITER: 90000
 DATASETS:
@@ -35,4 +35,4 @@ DATALOADER:
   DATASET_ANN: [ 'box', 'image' ]
   NUM_WORKERS: 8
 WITH_IMAGE_LABELS: True
-OUTPUT_DIR: output/rs_ovd_PIS
+OUTPUT_DIR: output/rs_ovd_PIS_on_RKD

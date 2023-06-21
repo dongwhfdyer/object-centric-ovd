@@ -201,6 +201,48 @@ def get_rs_ils_labels(dataset_dir, save_dir, conf_thresh=0.0):
     print("Total number of images not present in caption dataset is,", missing)
 
 
+def get_rs_20_ils_labels(dataset_dir, save_dir, conf_thresh=0.0):
+    images_path = f"{dataset_dir}/RS_images_20"
+    ils_annotation_path = f"{dataset_dir}/annotations/rs_20_image_info.json"
+    # The coco dataset must be setup correctly before running this script, see datasets/README.md for details
+    assert os.path.exists(images_path)
+    assert os.path.exists(ils_annotation_path)
+
+    # ---------kkuhn-block------------------------------ # empty the save_dir
+    if os.path.exists(save_dir):
+        shutil.rmtree(save_dir)
+    # ---------kkuhn-block------------------------------
+
+    annotations = parse_coco_annotations(ils_annotation_path)  # Parse annotations to get image-level labels
+    dumper = SaveProposalBoxes()  # Create dumper to save generated boxes (labels) in pkl format
+    # Iterate over all the images and generate ILS labels
+    detections = {}
+    missing = 0
+    images = annotations.keys()
+    for i, image_name_key in enumerate(tqdm(images)):
+        if i > 0 and i % 5 == 0:  # Save every 500 iterations
+            dumper.update(detections)
+            dumper.save_imagenet(save_dir)
+
+            detections = {}
+        image_path = f"{images_path}/{image_name_key}.jpg"
+        image_name = os.path.basename(image_name_key)
+        if image_name_key in annotations:
+            annotation = annotations[image_name_key]
+        else:
+            annotation = None
+            missing += 1
+        preds = {}
+        if annotation is not None:
+            for target in annotation:
+                query, _ = get_rs_query(target)
+                preds[target] = get_top_1_mavl_box(image_path, query, conf_thresh)
+        detections[image_name] = preds
+    dumper.update(detections)
+    dumper.save_imagenet(save_dir)
+    print("Total number of images not present in caption dataset is,", missing)
+
+
 if __name__ == "__main__":
     # Parse the arguments
     args = parse_arguments()
@@ -220,8 +262,11 @@ if __name__ == "__main__":
         get_imagenet_lvis_ils_labels(dataset_base_dir, output_dir)
     elif dataset_name == "rs":
         get_rs_ils_labels(dataset_base_dir, output_dir)
+    elif dataset_name == "rs_20":
+        get_rs_20_ils_labels(dataset_base_dir, output_dir)
     else:
         print(f"Only 'coco' and 'imagenet_lvis' datasets are supported.")
         raise NotImplementedError
 # python tools/get_ils_labels.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset imagenet_lvis -dataset_dir datasets/imagenet -output datasets/MAVL_proposals/lvis_props/class_specific/imagenet_lvis_props
 # python tools/get_ils_labels.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset rs -dataset_dir datasets/remote_sensing -output datasets/MAVL_proposals/rs_props/class_specific/
+# python tools/get_ils_labels.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset rs_20 -dataset_dir datasets/remote_sensing -output datasets/MAVL_proposals/rs_20_props/class_specific/

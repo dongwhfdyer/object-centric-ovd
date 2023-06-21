@@ -1,5 +1,9 @@
 # kuhn notes
 
+# Critical issues
+
+the 
+
 As for `tools/unzip_imagenet_lvis.py` file, we added the feature for selecting the overlapping images between imagenet and lvis dataset. 
 And we create a directory that contains the overlapping images by sim-linking the images from original imagenet directory.
 

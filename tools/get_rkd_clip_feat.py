@@ -26,11 +26,15 @@ Examples:
 
 import argparse
 import os
+import sys
+
 from tqdm import tqdm
 import numpy as np
 from PIL import Image
 import torch
 import json
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from external.mavl.models.model import Model
 from external.mavl.utils.nms import nms
@@ -56,7 +60,7 @@ def parse_arguments():
     ap.add_argument("-output", "--output_dir_path", required=False,
                     default='datasets/MAVL_proposals/coco_props/classagnostic_distilfeats',
                     help="Path to save the ILS labels.")
-    ap.add_argument("top_N", "top_N_rkd_proposals", type=int, required=False, default=5,
+    ap.add_argument("-top_N", "--top_N_rkd_proposals", type=int, required=False, default=5,
                     help="Number of proposals per image to be generated for RKD.")
 
     args = vars(ap.parse_args())
@@ -209,9 +213,45 @@ def get_rs_rkd_clip_features(dataset_dir, save_dir):
             dumper.update(rkd_region_feats)
             dumper.save_imagenet(save_dir)
             rkd_region_feats = {}
-        image_path = f"{images_path}/{image_name_key}.JPEG"
+        image_path = f"{images_path}/{image_name_key}.jpg"
         image_name = os.path.basename(image_name_key)
         # General CLIP features
+        rkd_region_feats[image_name] = get_clip_features(image_path)
+    dumper.update(rkd_region_feats)
+    dumper.save_imagenet(save_dir)
+
+
+def get_dior_rkd_clip_features(dataset_dir, save_dir):
+    images_path = f"{dataset_dir}/JPEGImages-trainval"
+    images_path_2 = f"{dataset_dir}/JPEGImages-test"
+
+    # The coco dataset must be setup correctly before running this script, see datasets/README.md for details
+    assert os.path.exists(images_path)
+    assert os.path.exists(images_path_2)
+    # Iterate over all the images, generate class-agnostic proposals and extract CLIP features
+    dumper = SaveRKDFeats()
+    rkd_region_feats = {}
+    for i, image_name_key in enumerate(tqdm(os.listdir(images_path))):
+        if i > 0 and i % 100 == 0:  # Save every 100 iterations
+            dumper.update(rkd_region_feats)
+            dumper.save_imagenet(save_dir)
+            rkd_region_feats = {}
+        image_path = f"{images_path}/{image_name_key}"
+        image_name = os.path.basename(image_name_key)
+        rkd_region_feats[image_name] = get_clip_features(image_path)
+    dumper.update(rkd_region_feats)
+    dumper.save_imagenet(save_dir)
+
+
+    dumper = SaveRKDFeats()
+    rkd_region_feats = {}
+    for i, image_name_key in enumerate(tqdm(os.listdir(images_path_2))):
+        if i > 0 and i % 100 == 0:  # Save every 100 iterations
+            dumper.update(rkd_region_feats)
+            dumper.save_imagenet(save_dir)
+            rkd_region_feats = {}
+        image_path = f"{images_path_2}/{image_name_key}"
+        image_name = os.path.basename(image_name_key)
         rkd_region_feats[image_name] = get_clip_features(image_path)
     dumper.update(rkd_region_feats)
     dumper.save_imagenet(save_dir)
@@ -238,8 +278,12 @@ if __name__ == "__main__":
         get_lvis_rkd_clip_features(dataset_base_dir, output_dir)
     elif dataset_name == "rs":
         get_rs_rkd_clip_features(dataset_base_dir, output_dir)
+    elif dataset_name == "dior":
+        get_dior_rkd_clip_features(dataset_base_dir, output_dir)
     else:
         print(f"Only 'coco' and 'imagenet_lvis' datasets are supported.")
         raise NotImplementedError
     # python tools/get_rkd_clip_feat.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset imagenet_lvis -dataset_dir datasets/imagenet -output datasets/MAVL_proposals/lvis_props/classagnostic_distilfeats/imagenet_distil_feats
     # python tools/get_rkd_clip_feat.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset rs -dataset_dir datasets/remote_sensing -output datasets/MAVL_proposals/lvis_props/classagnostic_distilfeats/imagenet_distil_feats
+    # python tools/get_rkd_clip_feat.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset rs -dataset_dir datasets/remote_sensing -output datasets/MAVL_proposals/rs_props/classagnostic_distilfeats
+    # python tools/get_rkd_clip_feat.py -ckpt saved_models/MDef_DETR_r101_epoch20.pth -dataset dior -dataset_dir datasets/DIOR -output datasets/MAVL_proposals/dior_props/classagnostic_distilfeats
