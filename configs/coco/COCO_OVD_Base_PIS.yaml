@@ -30,4 +30,6 @@ DATALOADER:
   DATASET_ANN: ['box', 'image']
   NUM_WORKERS: 8
 WITH_IMAGE_LABELS: True
+TEST:
+  EVAL_PERIOD: 1000
 OUTPUT_DIR: output/coco_ovd_PIS

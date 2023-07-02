@@ -18,7 +18,9 @@ def custom_register_imagenet_instances(name, metadata, json_file, image_root):
 
 _CUSTOM_SPLITS_IMAGENET = {
     "rs_20": ("remote_sensing/RS_images_20", "remote_sensing/annotations/rs_20_image_info.json"),
-    "rs_pis_20": ("remote_sensing/RS_images_20", "remote_sensing/annotations/rs_20_pis_aggregated.json"),
+    # "rs_pis_20": ("remote_sensing/RS_images_20", "remote_sensing/annotations/rs_20_pis_aggregated.json"),
+    "rs_pis_20_merge": ("CLASS_20_merge", "DIOR_20_Merge_labled/20_merge_image_info.json"),
+    "dior_automatic": ("DIOR_automatic_label/orig_images", "DIOR_automatic_label/DIOR_automatic_image_info.json"),
 }
 
 for key, (image_root, json_file) in _CUSTOM_SPLITS_IMAGENET.items():

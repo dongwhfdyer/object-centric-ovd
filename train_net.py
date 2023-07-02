@@ -111,17 +111,17 @@ def do_train(cfg, model, resume=False):
         else []
     )
 
-    if cfg.WITH_IMAGE_LABELS:
+    if cfg.WITH_IMAGE_LABELS:  # True for `COCO_OVD_Base_PIS`
         MapperClass = CustomDatasetMapperMix
     elif cfg.MODEL.DISTILLATION:
         MapperClass = CustomDatasetMapper
     else:
         MapperClass = DatasetMapper
     mapper = MapperClass(cfg, True) if cfg.INPUT.CUSTOM_AUG == '' else \
-        MapperClass(cfg, True, augmentations=build_custom_augmentation(cfg, True))
+        MapperClass(cfg, True, augmentations=build_custom_augmentation(cfg, True))  # True for `COCO_OVD_Base_PIS`
     if cfg.DATALOADER.SAMPLER_TRAIN in ['TrainingSampler', 'RepeatFactorTrainingSampler']:
         data_loader = build_detection_train_loader(cfg, mapper=mapper)
-    else:  # True for `LVIS_OVD__Base_PIS`
+    else:  # True for `LVIS_OVD_Base_PIS`, `COCO_OVD_Base_PIS`
         data_loader = build_custom_train_loader(cfg, mapper=mapper)  # data_loader = DIFFMDAspectRatioGroupedDataset
 
     if cfg.FP16:

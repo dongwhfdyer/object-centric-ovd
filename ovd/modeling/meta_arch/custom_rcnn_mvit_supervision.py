@@ -5,6 +5,8 @@ from detectron2.config import configurable
 from detectron2.structures import Instances, Boxes
 from detectron2.modeling.meta_arch.build import META_ARCH_REGISTRY
 from detectron2.modeling.meta_arch.rcnn import GeneralizedRCNN
+from matplotlib import pyplot as plt
+from matplotlib.patches import Rectangle
 from torch.cuda.amp import autocast
 import numpy as np
 
@@ -54,9 +56,63 @@ class CustomRCNNMViT(GeneralizedRCNN):
         assert detected_instances is None
 
         images = self.preprocess_image(batched_inputs)
+        # #---------kkuhn-block------------------------------ # part 1
+        # img_for_show = batched_inputs[0]['image'].permute(1, 2, 0).numpy()
+        # plt.imshow(img_for_show)
+        # plt.axis('off')
+        # plt.show()
+        # #---------kkuhn-block------------------------------
         features = self.backbone(images.tensor)
         proposals, _ = self.proposal_generator(images, features, None)
         results, _ = self.roi_heads(images, (features, None), proposals)
+        # #---------kkuhn-block------------------------------ # part 2
+        #
+        #
+        # processed_res = CustomRCNNMViT._postprocess( # todo: delete this line kuhn
+        #     results, batched_inputs, images.image_sizes)
+        # plt.imshow(img_for_show)
+        #
+        # image_path = batched_inputs[0]['file_name']
+        # pkl_path = image_path.replace('image_lable', 'pkl').replace('jpg', 'pkl')
+        # with open(pkl_path, 'rb') as f:
+        #     pkl = np.load(f, allow_pickle=True)
+        #     for cls_id in pkl:
+        #         bounding_boxes = pkl[cls_id][0]
+        #         for box in bounding_boxes:
+        #             x1, y1, x2, y2 = box
+        #             width = x2 - x1
+        #             height = y2 - y1
+        #             rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
+        #             plt.gca().add_patch(rect)
+        #             plt.text(x1, y1 - 5, f"Class {cls_id}", color='green')
+        #
+        #
+        #
+        #
+        #
+        # # Get the bounding boxes and predicted classes
+        # boxes = processed_res[0]['instances'].pred_boxes.tensor.cpu().numpy()
+        # classes = processed_res[0]['instances'].pred_classes.cpu().numpy()
+        #
+        # # Iterate over the bounding boxes and draw rectangles and labels
+        # for box, cls in zip(boxes, classes):
+        #     x1, y1, x2, y2 = box
+        #     width = x2 - x1
+        #     height = y2 - y1
+        #
+        #     # Draw the bounding box rectangle
+        #     rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='red')
+        #     plt.gca().add_patch(rect)
+        #
+        #     # Add the predicted class label
+        #     plt.text(x1, y1 - 5, f"Class {cls}", color='red')
+        #
+        # # Show the plot
+        # plt.axis('off')
+        # plt.show()
+        #
+        # #---------kkuhn-block------------------------------
+
         if do_postprocess:
             assert not torch.jit.is_scripting(), \
                 "Scripting is not supported for postprocess."
@@ -92,24 +148,23 @@ class CustomRCNNMViT(GeneralizedRCNN):
         else:
             features = self.backbone(images.tensor)
 
-
         if ann_type == 'box':
             rpn_proposals, proposal_losses = self.proposal_generator(
                 images, features, gt_instances)
         elif ann_type == 'image':
 
             try:
-                rpn_proposals, proposal_losses = self.proposal_generator(
+                rpn_proposals, proposal_losses = self.proposal_generator(  # 2000 proposal boxes with corresponding confidence
                     images, features, gt_instances)
             except FloatingPointError as e:
                 rpn_proposals = None
                 # set a large loss to prevent training
                 proposal_losses = {'loss_rpn_cls': torch.tensor(1).to(self.device),
-                                      'loss_rpn_loc': torch.tensor(1).to(self.device)}
+                                   'loss_rpn_loc': torch.tensor(1).to(self.device)}
                 print(e)
 
         if (self.with_image_labels) & (ann_type == 'image'):
-            proposals = self.convert_output_rpn_format_target(batched_inputs, images)
+            proposals = self.convert_output_rpn_format_target(batched_inputs, images)  # check if the pseudo labels are loaded in dataloader
             del rpn_proposals
         else:
             proposals = rpn_proposals
@@ -167,7 +222,7 @@ class CustomRCNNMViT(GeneralizedRCNN):
             res.objectness_logits = probas[keep]
             res.target_proposals = list(all_target_props.items())
             proposals.append(res)
-        # self.debug_viz(proposals, images, 0, 0)
+        # self.debug_viz(proposals, images, 0, 0) # todo: should be commented
         return proposals
 
     def get_clip_image_features(self, batched_inputs, images):

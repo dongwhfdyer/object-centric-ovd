@@ -262,7 +262,7 @@ class CustomDatasetMapperMix(DatasetMapper):
                 ), obj.get("iscrowd", 0))
                 for obj in dataset_dict.pop("annotations")
             ]
-            annos = [ann[0] for ann in all_annos if ann[1] == 0]
+            annos = [ann[0] for ann in all_annos if ann[1] == 0] # ann[1] == 0 means not crowd
             instances = utils.annotations_to_instances(
                 annos, image_shape, mask_format=self.instance_mask_format
             )
