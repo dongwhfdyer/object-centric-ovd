@@ -210,6 +210,22 @@ class CustomDatasetMapperMix(DatasetMapper):
             dataset_dict["cls_specific_scores"] = torch.tensor(np.array(probas))
             dataset_dict["cls_specific_target_props"] = oredered_detections
 
+            # #---------kkuhn-block------------------------------ # kuhn: should be deleted
+            # # visualize the boundingbox on the image using plt
+            # import matplotlib.pyplot as plt
+            # image_file = dataset_dict["file_name"]
+            #
+            # # read image
+            # image =plt.imshow(plt.imread(image_file))
+            #
+            # rect = plt.Rectangle((box[0], box[1]), box[2], box[3], fill=False, edgecolor='green', linewidth=1)
+            # # rect = plt.Rectangle((box[0], box[1]), box[2] - box[0], box[3] - box[1], fill=False, edgecolor='red', linewidth=1)
+            # plt.gca().add_patch(rect)
+            # plt.show()
+            #
+            #
+            # #---------kkuhn-block------------------------------
+
         # Loading RKD features
         if self.distillation and self.is_train and len(self.rkd_feat_path) > 0:
             image_name = dataset_dict["file_name"].split('.')[0].split('/')[-1]

@@ -1,16 +1,16 @@
 import pickle
 from pathlib import Path
 
-file_path = "datasets/DIOR_20_Merge_labled/pkl/0_airplane,aircraft,aeroplane_1.pkl"
+pkl_file = Path("datasets/MAVL_proposals/coco_props/class_specific/000000000009.pkl")
 
-with open(file_path, "rb") as f:
+with open(pkl_file, "rb") as f:
     data = pickle.load(f)
+    bounding_boxes = data[56][0][0]
+    x_min, y_min, x_max, y_max = bounding_boxes
     print("--------------------------------------------------")
 
-bounding_boxes = data[0][0][0]
-x_min, y_min, x_max, y_max = bounding_boxes
 
-image_file = Path("datasets/CLASS_20_merge/0_airplane,aircraft,aeroplane_1.jpg")
+image_file = Path("datasets/coco/coco2017/train2017/000000000009.jpg")
 
 import matplotlib.pyplot as plt
 

@@ -18,13 +18,15 @@ with open('tools/category_id_info.csv', encoding='utf-8-sig', newline='') as csv
         category2id[label] = value
         id2category[value] = label
 
-image_folder = Path("datasets/DIOR_automatic_label/image_lable")
+image_folder = Path("datasets/DIOR_automatic_label/orig_images")
 anno_folder = Path("datasets/DIOR_automatic_label/pkl")
 img_counter = 0
 
 img_infos = []
-category_info ={}
+category_info = {}
 category_info_list = []
+
+
 # cat_info = {"id": category2id[folder], "name": category, "image_count": num_images}
 def get_cat_ids_from_pkl(anno_folder, stem):
     json_path = anno_folder / (stem + '.pkl')
@@ -36,9 +38,6 @@ def get_cat_ids_from_pkl(anno_folder, stem):
             else:
                 category_info[key] += len(anno[key][0])
     return list(anno.keys())
-
-
-
 
 
 for image_file in image_folder.glob("*.jpg"):

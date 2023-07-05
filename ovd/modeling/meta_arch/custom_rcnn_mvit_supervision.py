@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import torch
 from detectron2.utils.events import get_event_storage
@@ -73,39 +75,52 @@ class CustomRCNNMViT(GeneralizedRCNN):
         # plt.imshow(img_for_show)
         #
         # image_path = batched_inputs[0]['file_name']
-        # pkl_path = image_path.replace('image_lable', 'pkl').replace('jpg', 'pkl')
-        # with open(pkl_path, 'rb') as f:
-        #     pkl = np.load(f, allow_pickle=True)
-        #     for cls_id in pkl:
-        #         bounding_boxes = pkl[cls_id][0]
-        #         for box in bounding_boxes:
-        #             x1, y1, x2, y2 = box
-        #             width = x2 - x1
-        #             height = y2 - y1
-        #             rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
-        #             plt.gca().add_patch(rect)
-        #             plt.text(x1, y1 - 5, f"Class {cls_id}", color='green')
+        #
+        # # pkl_path = image_path.replace('image_lable', 'pkl').replace('jpg', 'pkl')
+        # # with open(pkl_path, 'rb') as f:
+        # #     pkl = np.load(f, allow_pickle=True)
+        # #     for cls_id in pkl:
+        # #         bounding_boxes = pkl[cls_id][0]
+        # #         for box in bounding_boxes:
+        # #             x1, y1, x2, y2 = box
+        # #             width = x2 - x1
+        # #             height = y2 - y1
+        # #             rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
+        # #             plt.gca().add_patch(rect)
+        # #             plt.text(x1, y1 - 5, f"Class {cls_id}", color='green')
+        #
+        # dior_unseen_test = Path("datasets/DIOR/Annotations/coco_split/instances_DIOR_test_unseen_2.json")
+        # image_id = int(image_path.split('/')[-1].split('.')[0])
+        # with open(dior_unseen_test, 'r') as f:
+        #     dior_unseen_test = json.load(f)
+        # for ann in dior_unseen_test['annotations']:
+        #     if int(ann['image_id']) == image_id:
+        #         x1, y1, width, height = ann['bbox']
+        #         rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
+        #         plt.gca().add_patch(rect)
+        #         plt.text(x1, y1 - 5, f"class {ann['category_id']}", color='green')
         #
         #
         #
         #
         #
-        # # Get the bounding boxes and predicted classes
-        # boxes = processed_res[0]['instances'].pred_boxes.tensor.cpu().numpy()
-        # classes = processed_res[0]['instances'].pred_classes.cpu().numpy()
         #
-        # # Iterate over the bounding boxes and draw rectangles and labels
-        # for box, cls in zip(boxes, classes):
-        #     x1, y1, x2, y2 = box
-        #     width = x2 - x1
-        #     height = y2 - y1
-        #
-        #     # Draw the bounding box rectangle
-        #     rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='red')
-        #     plt.gca().add_patch(rect)
-        #
-        #     # Add the predicted class label
-        #     plt.text(x1, y1 - 5, f"Class {cls}", color='red')
+        # # # Get the bounding boxes and predicted classes
+        # # boxes = processed_res[0]['instances'].pred_boxes.tensor.cpu().numpy()
+        # # classes = processed_res[0]['instances'].pred_classes.cpu().numpy()
+        # #
+        # # # Iterate over the bounding boxes and draw rectangles and labels
+        # # for box, cls in zip(boxes, classes):
+        # #     x1, y1, x2, y2 = box
+        # #     width = x2 - x1
+        # #     height = y2 - y1
+        # #
+        # #     # Draw the bounding box rectangle
+        # #     rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='red')
+        # #     plt.gca().add_patch(rect)
+        # #
+        # #     # Add the predicted class label
+        # #     plt.text(x1, y1 - 5, f"Class {cls}", color='red')
         #
         # # Show the plot
         # plt.axis('off')
