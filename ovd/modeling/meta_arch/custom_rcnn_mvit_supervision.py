@@ -36,6 +36,7 @@ class CustomRCNNMViT(GeneralizedRCNN):
         super().__init__(**kwargs)
         assert self.proposal_generator is not None
         self.distillation = distillation
+        self.visualized_num = 0
 
     @classmethod
     def from_config(cls, cfg):
@@ -58,75 +59,80 @@ class CustomRCNNMViT(GeneralizedRCNN):
         assert detected_instances is None
 
         images = self.preprocess_image(batched_inputs)
-        # #---------kkuhn-block------------------------------ # part 1
-        # img_for_show = batched_inputs[0]['image'].permute(1, 2, 0).numpy()
-        # plt.imshow(img_for_show)
-        # plt.axis('off')
+        #---------kkuhn-block------------------------------ # part 1
+        plt.figure()
+        img_for_show = batched_inputs[0]['image'].permute(1, 2, 0).numpy()
+        plt.imshow(img_for_show)
+        plt.axis('off')
         # plt.show()
-        # #---------kkuhn-block------------------------------
+        #---------kkuhn-block------------------------------
         features = self.backbone(images.tensor)
         proposals, _ = self.proposal_generator(images, features, None)
         results, _ = self.roi_heads(images, (features, None), proposals)
-        # #---------kkuhn-block------------------------------ # part 2
-        #
-        #
-        # processed_res = CustomRCNNMViT._postprocess( # todo: delete this line kuhn
-        #     results, batched_inputs, images.image_sizes)
-        # plt.imshow(img_for_show)
-        #
-        # image_path = batched_inputs[0]['file_name']
-        #
-        # # pkl_path = image_path.replace('image_lable', 'pkl').replace('jpg', 'pkl')
-        # # with open(pkl_path, 'rb') as f:
-        # #     pkl = np.load(f, allow_pickle=True)
-        # #     for cls_id in pkl:
-        # #         bounding_boxes = pkl[cls_id][0]
-        # #         for box in bounding_boxes:
-        # #             x1, y1, x2, y2 = box
-        # #             width = x2 - x1
-        # #             height = y2 - y1
-        # #             rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
-        # #             plt.gca().add_patch(rect)
-        # #             plt.text(x1, y1 - 5, f"Class {cls_id}", color='green')
-        #
-        # dior_unseen_test = Path("datasets/DIOR/Annotations/coco_split/instances_DIOR_test_unseen_2.json")
-        # image_id = int(image_path.split('/')[-1].split('.')[0])
-        # with open(dior_unseen_test, 'r') as f:
-        #     dior_unseen_test = json.load(f)
-        # for ann in dior_unseen_test['annotations']:
-        #     if int(ann['image_id']) == image_id:
-        #         x1, y1, width, height = ann['bbox']
-        #         rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
-        #         plt.gca().add_patch(rect)
-        #         plt.text(x1, y1 - 5, f"class {ann['category_id']}", color='green')
-        #
-        #
-        #
-        #
-        #
-        #
-        # # # Get the bounding boxes and predicted classes
-        # # boxes = processed_res[0]['instances'].pred_boxes.tensor.cpu().numpy()
-        # # classes = processed_res[0]['instances'].pred_classes.cpu().numpy()
-        # #
-        # # # Iterate over the bounding boxes and draw rectangles and labels
-        # # for box, cls in zip(boxes, classes):
-        # #     x1, y1, x2, y2 = box
-        # #     width = x2 - x1
-        # #     height = y2 - y1
-        # #
-        # #     # Draw the bounding box rectangle
-        # #     rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='red')
-        # #     plt.gca().add_patch(rect)
-        # #
-        # #     # Add the predicted class label
-        # #     plt.text(x1, y1 - 5, f"Class {cls}", color='red')
-        #
-        # # Show the plot
-        # plt.axis('off')
+        #---------kkuhn-block------------------------------ # part 2
+
+
+        processed_res = CustomRCNNMViT._postprocess( # todo: delete this line kuhn
+            results, batched_inputs, images.image_sizes)
+
+        image_path = batched_inputs[0]['file_name']
+
+        # pkl_path = image_path.replace('image_lable', 'pkl').replace('jpg', 'pkl')
+        # with open(pkl_path, 'rb') as f:
+        #     pkl = np.load(f, allow_pickle=True)
+        #     for cls_id in pkl:
+        #         bounding_boxes = pkl[cls_id][0]
+        #         for box in bounding_boxes:
+        #             x1, y1, x2, y2 = box
+        #             width = x2 - x1
+        #             height = y2 - y1
+        #             rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
+        #             plt.gca().add_patch(rect)
+        #             plt.text(x1, y1 - 5, f"Class {cls_id}", color='green')
+
+        dior_unseen_test = Path("datasets/DIOR/Annotations/coco_split/instances_DIOR_test_unseen_2.json")
+        image_id = int(image_path.split('/')[-1].split('.')[0])
+        with open(dior_unseen_test, 'r') as f:
+            dior_unseen_test = json.load(f)
+        for ann in dior_unseen_test['annotations']:
+            if int(ann['image_id']) == image_id:
+                x1, y1, width, height = ann['bbox']
+                rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='green')
+                plt.gca().add_patch(rect)
+                plt.text(x1, y1 - 5, f"class {ann['category_id']}", color='green')
+
+
+
+
+
+
+        # Get the bounding boxes and predicted classes
+        boxes = processed_res[0]['instances'].pred_boxes.tensor.cpu().numpy()
+        classes = processed_res[0]['instances'].pred_classes.cpu().numpy()
+
+        # Iterate over the bounding boxes and draw rectangles and labels
+        for box, cls in zip(boxes, classes):
+            x1, y1, x2, y2 = box
+            width = x2 - x1
+            height = y2 - y1
+
+            # Draw the bounding box rectangle
+            rect = plt.Rectangle((x1, y1), width, height, fill=False, edgecolor='red')
+            plt.gca().add_patch(rect)
+
+            # Add the predicted class label
+            plt.text(x1, y1 - 5, f"Class {cls}", color='red')
+
+        # Show the plot
+        plt.axis('off')
         # plt.show()
-        #
-        # #---------kkuhn-block------------------------------
+        plt.savefig(f"output/rubb/{str(image_id)}_visualized.jpg")
+        self.visualized_num += 1
+        if self.visualized_num > 1000:
+            exit()
+
+
+        #---------kkuhn-block------------------------------
 
         if do_postprocess:
             assert not torch.jit.is_scripting(), \

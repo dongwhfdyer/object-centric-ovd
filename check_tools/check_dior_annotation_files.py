@@ -19,6 +19,9 @@ with open(f1, "r") as f:
 # with open(f2, "r") as f:
 #     data2 = json.load(f)
 
+with open(dior_train_det_dataset_cat_info, "r") as f:
+    data2 = json.load(f)
+
 with open(f1_edited, "r") as f:
     data1_edited = json.load(f)
 

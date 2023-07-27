@@ -22,9 +22,9 @@ img_counter = 0
 category_info = {}
 img_infos = []
 # cat_info = {"id": category2id[folder], "name": category, "image_count": num_images}
-for image_file in image_folder.glob("*.jpg"):
+for image_file in image_folder.glob("*"):
     cat_id = int(image_file.stem.split('_')[0])
-    file_name = image_file.stem + '.jpg'
+    file_name = image_file.name
     if cat_id not in category_info:
         category_info[cat_id] = 1
     else:

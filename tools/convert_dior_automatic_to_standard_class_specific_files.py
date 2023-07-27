@@ -18,18 +18,29 @@ for json_file in original_json_folder.glob("*.json"):
     with open(json_file, "r") as f:
         data = json.load(f)
         pkl_dict = {}
-        for i in range(len(data['mask'])):
-            if 'class' not in data['mask'][i]:
-                continue
-            category_id = data['mask'][i]['class']
-            if category_id not in pkl_dict:
-                bounding_box = data['mask'][i]['box']
-                pkl_dict[category_id] = ([bounding_box],[0.98])
-            else:
-                bounding_box = data['mask'][i]['box']
-                pkl_dict[category_id][0].append(bounding_box)
-                pkl_dict[category_id][1].append(0.98)
-            print("--------------------------------------------------")
+
+        #---------kkuhn-block------------------------------ # lhd version
+        if len(data['mask']) < 2:
+            continue
+        category_id = data['mask'][1]['class']
+        bounding_box = data['mask'][1]['box']
+        pkl_dict[category_id] = ([bounding_box], [0.98])
+        #---------kkuhn-block------------------------------
+
+        # #---------kkuhn-block------------------------------ # old version
+        # for i in range(len(data['mask'])):
+        #     if 'class' not in data['mask'][i]:
+        #         continue
+        #     category_id = data['mask'][i]['class']
+        #     if category_id not in pkl_dict:
+        #         bounding_box = data['mask'][i]['box']
+        #         pkl_dict[category_id] = ([bounding_box], [0.98])
+        #     else:
+        #         bounding_box = data['mask'][i]['box']
+        #         pkl_dict[category_id][0].append(bounding_box)
+        #         pkl_dict[category_id][1].append(0.98)
+        #     print("--------------------------------------------------")
+        # #---------kkuhn-block------------------------------
 
     pkl_file = output_pkl_folder / (json_file.stem + ".pkl")
 

@@ -1,8 +1,9 @@
 _BASE_: "Base-OVD-RCNN-C4-DIOR.yaml"
 MODEL:
   META_ARCHITECTURE: "CustomRCNNMViT"
-  #  WEIGHTS: ""
-  WEIGHTS: output/coco_ovd_base/model_0089999.pth
+  #  WEIGHTS: "" # todo
+  WEIGHTS: output/rs_dior_automatic_ovd_PIS/model_final.pth # rs base
+#  WEIGHTS: output/coco_ovd_base/model_0089999.pth # rs base
   #  WEIGHTS: saved_models/coco_ovd_base.pth
   PIS_PROP_PATH: datasets/DIOR_automatic_label/pkl
   ROI_HEADS:
@@ -20,6 +21,7 @@ SOLVER:
 DATASETS:
   TRAIN: ("DIOR_zeroshot_train_oriorder", "dior_automatic")
 #  TEST: ("dior_automatic",)
+  TEST: ("DIOR_zeroshot_val",) # todo
 INPUT:
   CUSTOM_AUG: ResizeShortestEdge
   MIN_SIZE_TRAIN_SAMPLING: range
@@ -37,4 +39,4 @@ DATALOADER:
   DATASET_ANN: [ 'box', 'image' ]
   NUM_WORKERS: 8
 WITH_IMAGE_LABELS: True
-OUTPUT_DIR: output/rs_dior_automatic_ovd_PIS
+OUTPUT_DIR: output/rs_dior_automatic_ovd_PIS # todo

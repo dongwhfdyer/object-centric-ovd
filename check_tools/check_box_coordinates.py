@@ -1,15 +1,16 @@
 import os
 import pickle
 from PIL import Image, ImageDraw, ImageFont
+from matplotlib import pyplot as plt
 
-file_path = "datasets/DIOR_20_Merge_labled/pkl/0_airplane,aircraft,aeroplane_1.pkl"
+file_path = "datasets/DIOR_20_Merge_labled/pkl/4_bridge_1.pkl"
 
 with open(file_path, "rb") as f:
     data = pickle.load(f)
-    boxes_coordinates = data[0][0]
+    boxes_coordinates = data[4][0]
     print("--------------------------------------------------")
 
-img_path = "datasets/CLASS_20_merge/0_airplane,aircraft,aeroplane_1.jpg"
+img_path = "datasets/DIOR_20_Merge/4_bridge_1.jpg"
 output_dir = 'rubb/visualized'
 img_file_name = '0_airplane,aircraft,aeroplane_1.jpg'
 
@@ -35,5 +36,8 @@ def visualize_boxes(img_path, boxes, caption=None):
 
 
 visualized_img = visualize_boxes(img_path, boxes_coordinates)
+plt.imshow(visualized_img)
+plt.show()
+
 
 visualized_img.save(os.path.join(output_dir, img_file_name))
