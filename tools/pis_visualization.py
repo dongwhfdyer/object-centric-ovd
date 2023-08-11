@@ -117,7 +117,226 @@ from pathlib import Path
 #
 # # ---------kkuhn-block------------------------------
 
-# ---------kkuhn-block------------------------------ # visualization for rs
+# # ---------kkuhn-block------------------------------ # visualization for rs
+#
+# import os
+# import random
+# import pickle
+# from PIL import Image, ImageDraw, ImageFont
+#
+#
+# def visualize_boxes(img_path, boxes, caption=None):
+#     # Open the image
+#     img = Image.open(img_path)
+#
+#     # Draw the boxes on the image
+#     draw = ImageDraw.Draw(img)
+#     for box in boxes:
+#         left, top, right, bottom = box
+#         draw.rectangle([left, top, right, bottom], outline='red', width=2)
+#
+#     # Add the caption to the upper left of the image
+#     if caption:
+#         font = ImageFont.load_default()
+#         text_size = draw.textsize(caption, font)
+#         draw.rectangle([0, 0, text_size[0], text_size[1]], fill='red')
+#         draw.text((0, 0), caption, fill='white', font=font)
+#
+#     return img
+#
+#
+# def main():
+#     images_dir = 'datasets/remote_sensing/RS_images'
+#     pkl_dir = 'datasets/MAVL_proposals/rs_props/classagnostic_distilfeats'
+#     output_dir = 'rubb/visualized'
+#
+#     category2id = {}
+#     id2category = {}
+#
+#     # Open the CSV file (replace with the path to your file)
+#     with open('/data/pcl/proj/object-centric-ovd/tools/category_id_info.csv', encoding='utf-8-sig', newline='') as csvfile:
+#         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+#         for row in reader:
+#             # remove the useless token
+#             label, value = row
+#             label = label.replace(' ', '_')
+#             value = int(value)
+#             category2id[label] = value
+#             id2category[value] = label
+#
+#     num_samples = 100
+#
+#     # delete the output directory forcefully
+#     if os.path.exists(output_dir):
+#         shutil.rmtree(output_dir)
+#     os.makedirs(output_dir)
+#
+#     image_files = []
+#
+#     # Walk through the directory tree and get a list of all image files
+#     for dirpath, dirnames, filenames in os.walk(images_dir):
+#         for filename in filenames:
+#             if filename.endswith('.jpg'):
+#                 image_path = os.path.join(dirpath, filename)
+#                 image_files.append(image_path)
+#
+#     # Check if there are enough images for sampling
+#     if len(image_files) < num_samples:
+#         print(f"Error: The number of available images ({len(image_files)}) is less than the requested samples ({num_samples}).")
+#         return
+#
+#     # Randomly sample image files
+#     sampled_image_files = random.sample(image_files, num_samples)
+#
+#     for img_file in sampled_image_files:
+#         cat_id = img_file.split('/')[-1].split('_')[0]
+#         cat_name = id2category[int(cat_id)]
+#         img_id = img_file.split('/')[-1].split('.')[0]
+#         img_path = img_file
+#         img_file = img_file.split('/')[-1]
+#         pkl_path = os.path.join(pkl_dir, str(cat_id), f'{img_id}.pkl')
+#
+#         # Check if the pkl file exists
+#         if not os.path.exists(pkl_path):
+#             print(f"Error: The pkl file for {img_file} does not exist.")
+#             continue
+#
+#         # Load the boxes from the pkl file
+#         with open(pkl_path, 'rb') as f:
+#             img_to_boxes = pickle.load(f)
+#
+#         # Extract boxes_coordinates
+#         boxes_coordinates = [item[0] for item in img_to_boxes]
+#
+#         # Visualize the boxes on the image
+#         visualized_img = visualize_boxes(img_path, boxes_coordinates, caption=cat_name)
+#
+#         # Save the visualized image to the new folder
+#         visualized_img.save(os.path.join(output_dir, img_file))
+#
+#
+# if __name__ == "__main__":
+#     main()
+#
+# # ---------kkuhn-block------------------------------
+
+
+# # ---------kkuhn-block------------------------------ # visualization for merge_split_1
+#
+# import os
+# import random
+# import pickle
+# from PIL import Image, ImageDraw, ImageFont
+#
+#
+# def visualize_boxes(img_path, boxes, caption=None):
+#     # Open the image
+#     img = Image.open(img_path)
+#
+#     # Draw the boxes on the image
+#     draw = ImageDraw.Draw(img)
+#     for box in boxes:
+#         left, top, right, bottom = box
+#         draw.rectangle([left, top, right, bottom], outline='red', width=2)
+#
+#     # Add the caption to the upper left of the image
+#     if caption:
+#         font = ImageFont.load_default()
+#         text_size = draw.textsize(caption, font)
+#         draw.rectangle([0, 0, text_size[0], text_size[1]], fill='red')
+#         draw.text((0, 0), caption, fill='white', font=font)
+#
+#     return img
+#
+#
+# def main():
+#
+#
+#     images_dir = '/data/pcl/proj/object-centric-ovd/datasets/merge_split_1'
+#     pkl_dir = '/data/pcl/proj/object-centric-ovd/datasets/MAVL_proposals/merge_split_1_props/class_specific'
+#     output_dir = '/data/pcl/proj/object-centric-ovd/rubb/visualized2'
+#
+#
+#     category2id = {}
+#     id2category = {}
+#
+#     # Open the CSV file (replace with the path to your file)
+#     with open('/data/pcl/proj/object-centric-ovd/tools/category_id_info.csv', encoding='utf-8-sig', newline='') as csvfile:
+#         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+#         for row in reader:
+#             # remove the useless token
+#             label, value = row
+#             label = label.replace(' ', '_')
+#             value = int(value)
+#             category2id[label] = value
+#             id2category[value] = label
+#
+#     num_samples = 100
+#
+#     # delete the output directory forcefully
+#     if os.path.exists(output_dir):
+#         shutil.rmtree(output_dir)
+#     os.makedirs(output_dir)
+#
+#     image_files = []
+#
+#     # Walk through the directory tree and get a list of all image files
+#     for dirpath, dirnames, filenames in os.walk(images_dir):
+#         for filename in filenames:
+#             if filename.endswith('.jpg'):
+#                 image_path = os.path.join(dirpath, filename)
+#                 image_files.append(image_path)
+#
+#     # Check if there are enough images for sampling
+#     if len(image_files) < num_samples:
+#         print(f"Error: The number of available images ({len(image_files)}) is less than the requested samples ({num_samples}).")
+#         return
+#
+#     sampled_image_files = image_files
+#     ind = 0
+#
+#     for img_file in sampled_image_files:
+#         cat_id = img_file.split('/')[-1].split('_')[0]
+#         cat_name = id2category[int(cat_id)]
+#         img_id = img_file.split('/')[-1].split('.')[0]
+#         img_path = img_file
+#         img_file = img_file.split('/')[-1]
+#         pkl_path = os.path.join(pkl_dir, str(cat_id), f'{img_id}.pkl')
+#
+#         # Check if the pkl file exists
+#         if not os.path.exists(pkl_path):
+#             print(f"Error: The pkl file for {img_file} does not exist.")
+#             continue
+#
+#         # Load the boxes from the pkl file
+#         with open(pkl_path, 'rb') as f:
+#             img_to_boxes = pickle.load(f)
+#
+#         # Extract boxes_coordinates
+#         boxes_coordinates = [img_to_boxes[item][0] for item in img_to_boxes][0]
+#
+#         # Visualize the boxes on the image
+#         visualized_img = visualize_boxes(img_path, boxes_coordinates, caption=cat_name)
+#
+#         # Save the visualized image to the new folder
+#         try:
+#             visualized_img.save(os.path.join(output_dir, img_file))
+#         except Exception as e:
+#             print(e)
+#             continue
+#
+#         ind += 1
+#         if ind > 100:
+#             break
+#
+#
+# if __name__ == "__main__":
+#     main()
+#
+# # ---------kkuhn-block------------------------------
+
+
+# ---------kkuhn-block------------------------------ # visualization for 5 images
 
 import os
 import random
@@ -146,15 +365,15 @@ def visualize_boxes(img_path, boxes, caption=None):
 
 
 def main():
-    images_dir = 'datasets/remote_sensing/RS_images'
-    pkl_dir = 'datasets/MAVL_proposals/rs_props/classagnostic_distilfeats'
-    output_dir = 'rubb/visualized'
+    images_dir = '/data/pcl/proj/object-centric-ovd/datasets/5images'
+    pkl_dir = '/data/pcl/proj/object-centric-ovd/datasets/MAVL_proposals/5images/class_specific'
+    output_dir = '/data/pcl/proj/object-centric-ovd/rubb/visualized3'
 
     category2id = {}
     id2category = {}
 
     # Open the CSV file (replace with the path to your file)
-    with open('tools/category_id_info.csv', encoding='utf-8-sig', newline='') as csvfile:
+    with open('/data/pcl/proj/object-centric-ovd/tools/category_id_info.csv', encoding='utf-8-sig', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
         for row in reader:
             # remove the useless token
@@ -164,37 +383,47 @@ def main():
             category2id[label] = value
             id2category[value] = label
 
-    num_samples = 100
-
-    # delete the output directory forcefully
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
-        os.makedirs(output_dir)
+    os.makedirs(output_dir)
 
     image_files = []
 
     # Walk through the directory tree and get a list of all image files
     for dirpath, dirnames, filenames in os.walk(images_dir):
         for filename in filenames:
-            if filename.endswith('.jpg'):
-                image_path = os.path.join(dirpath, filename)
-                image_files.append(image_path)
+            image_path = os.path.join(dirpath, filename)
+            image_files.append(image_path)
 
-    # Check if there are enough images for sampling
-    if len(image_files) < num_samples:
-        print(f"Error: The number of available images ({len(image_files)}) is less than the requested samples ({num_samples}).")
-        return
-
-    # Randomly sample image files
-    sampled_image_files = random.sample(image_files, num_samples)
+    # ---------kkuhn-block------------------------------ # todo: whether to select all
+    sampled_image_files = image_files
+    ind = 0
+    # ---------kkuhn-block------------------------------
 
     for img_file in sampled_image_files:
-        cat_id = img_file.split('/')[-1].split('_')[0]
-        cat_name = id2category[int(cat_id)]
+        image_name = Path(img_file).stem
+        filename = Path(img_file).name
+
+        if image_name == 'a001':
+            cat_name = 'baseball_field'
+
+        elif image_name == 'a002':
+            cat_name = 'basketball_court'
+
+        elif image_name == 'a003':
+            cat_name = 'bridge'
+
+
+        elif image_name == 'a004':
+            cat_name = 'chimney'
+
+        elif image_name == 'a005':
+            cat_name = 'dam'
+
         img_id = img_file.split('/')[-1].split('.')[0]
         img_path = img_file
         img_file = img_file.split('/')[-1]
-        pkl_path = os.path.join(pkl_dir, str(cat_id), f'{img_id}.pkl')
+        pkl_path = os.path.join(pkl_dir, img_id, f'{img_id}.pkl')
 
         # Check if the pkl file exists
         if not os.path.exists(pkl_path):
@@ -206,13 +435,21 @@ def main():
             img_to_boxes = pickle.load(f)
 
         # Extract boxes_coordinates
-        boxes_coordinates = [item[0] for item in img_to_boxes]
+        boxes_coordinates = [img_to_boxes[item][0] for item in img_to_boxes][0]
 
         # Visualize the boxes on the image
         visualized_img = visualize_boxes(img_path, boxes_coordinates, caption=cat_name)
 
         # Save the visualized image to the new folder
-        visualized_img.save(os.path.join(output_dir, img_file))
+        try:
+            visualized_img.save(os.path.join(output_dir, img_file))
+        except Exception as e:
+            print(e)
+            continue
+
+        ind += 1
+        if ind > 100:
+            break
 
 
 if __name__ == "__main__":

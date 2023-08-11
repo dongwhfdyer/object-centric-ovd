@@ -1,0 +1,38 @@
+MODEL:
+  META_ARCHITECTURE: "CustomRCNN"
+  RPN:
+    PRE_NMS_TOPK_TEST: 6000
+    POST_NMS_TOPK_TEST: 1000
+  ROI_HEADS:
+    NAME: "CustomRes5ROIHeads"
+    NUM_CLASSES: 20
+#  WEIGHTS: "detectron2://ImageNetPretrained/MSRA/R-50.pkl"
+#  WEIGHTS: "/data/data/coco/R-50.pkl"
+  WEIGHTS: "/data/data/coco/R-101.pkl"
+#  WEIGHTS: "/data/pcl/object-centric-ovd/output/coco_ovd_base/split_3/model_0089999.pth"
+  RESNETS:
+    DEPTH: 101 #原来是50
+  ROI_BOX_HEAD:
+    CLS_AGNOSTIC_BBOX_REG: True
+    USE_SIGMOID_CE: True
+    USE_ZEROSHOT_CLS: True
+    ZEROSHOT_WEIGHT_PATH: "/data/pcl/object-centric-ovd/datasets/zeroshot_weights/DIOR_clip_a+photo+cname.npy"
+    IGNORE_ZERO_CATS: True
+    CAT_FREQ_PATH: "/data/pcl/object-centric-ovd/datasets/DIOR/Annotations/coco_split/split_1/instances_DIOR_train_seen_2_oriorder_ori_cat_info.json"
+DATASETS:
+  TRAIN: ("DIOR_zeroshot_train_oriorder_1_trainval",)
+  TEST: ("DIOR_generalized_zeroshot_val_1_trainval",)
+SOLVER:
+  IMS_PER_BATCH: 4 # Overall batch-size
+  BASE_LR: 0.01
+  STEPS: (60000, 80000)
+  MAX_ITER: 90000
+  CHECKPOINT_PERIOD: 5000
+
+INPUT:
+  MIN_SIZE_TRAIN: (800,)
+TEST:
+  EVAL_PERIOD: 5000
+VERSION: 2
+OUTPUT_DIR: /data/pcl/object-centric-ovd/output/coco_ovd_base/split_1/
+FP16: True

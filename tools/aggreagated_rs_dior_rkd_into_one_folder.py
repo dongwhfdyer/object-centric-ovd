@@ -80,14 +80,23 @@ from pathlib import Path
 from tqdm import tqdm
 
 # Define the paths of the source folders and the target folder
-src_folder1 = "datasets/MAVL_proposals/rs_props/classagnostic_distilfeats"
-src_folder2 = "datasets/MAVL_proposals/dior_props/classagnostic_distilfeats"
-target_folder = "datasets/MAVL_proposals/rs_dior_aggregated"
+
+# #---------kkuhn-block------------------------------ # file paths 1
+# src_folder1 = "datasets/MAVL_proposals/rs_props/classagnostic_distilfeats"
+# src_folder2 = "datasets/MAVL_proposals/dior_props/classagnostic_distilfeats"
+# target_folder = "datasets/MAVL_proposals/rs_dior_aggregated"
+# #---------kkuhn-block------------------------------
+
+#---------kkuhn-block------------------------------ # file paths 2
+src_folder1 = "/data/pcl/proj/object-centric-ovd/datasets/MAVL_proposals/merge_split_1_props/class_specific"
+target_folder = "/data/pcl/proj/object-centric-ovd/datasets/MAVL_proposals/merge_split_1_props/aggregate"
+#---------kkuhn-block------------------------------
 
 # Remove the target folder if it exists, then create a new one
 if os.path.exists(target_folder):
     shutil.rmtree(target_folder)
 Path(target_folder).mkdir(parents=True, exist_ok=True)
+
 
 def create_symlinks(src_folder: str) -> None:
     # Get the total number of files for the progress bar
@@ -110,6 +119,6 @@ def create_symlinks(src_folder: str) -> None:
                     else:
                         print(target_file_path)
 
+
 # Create symlinks for both source folders
 create_symlinks(src_folder1)
-create_symlinks(src_folder2)

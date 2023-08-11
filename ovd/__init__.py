@@ -10,3 +10,4 @@ from .datasets import coco_zeroshot
 from .datasets import RS
 from .datasets import RS_20
 from .datasets import DIOR_zero_shot
+from .datasets import DIOR_zero_shot_1_trainval
